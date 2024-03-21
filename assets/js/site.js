@@ -123,6 +123,25 @@ function pollenDataScructure(data) {
     myViewData.push(data.current)
 
 
+    // generate Hour data
+
+    let myMasterArray = data.hourly.time
+
+    let HourData = []
+    myMasterArray.map((myTime, index) => {
+        let hourData = {}
+        hourData.time = myTime
+        hourData.alder_pollen = data.hourly.alder_pollen[index]
+        hourData.birch_pollen = data.hourly.birch_pollen[index]
+        hourData.grass_pollen = data.hourly.grass_pollen[index]
+        hourData.mugwort_pollen = data.hourly.mugwort_pollen[index]
+        hourData.olive_pollen = data.hourly.olive_pollen[index]
+        hourData.ragweed_pollen = data.hourly.ragweed_pollen[index]
+
+        HourData.push(hourData)
+    })
+    myViewData.push(HourData)
+    //console.log(HourData);
 
     BuildPollenView(myViewData)
 
@@ -130,8 +149,18 @@ function pollenDataScructure(data) {
 }
 
 
+/* alder_pollen
+birch_pollen
+grass_pollen
+mugwort_pollen
+olive_pollen
+ragweed_pollen */
+
+
+
 // view code
 
+// builds a pollen data view with current data and hourly 24 hor data recieved in an array
 function BuildPollenView(viewData) {
 
     // build current
@@ -152,6 +181,31 @@ function BuildPollenView(viewData) {
         </section>`
 
     myDisplayElement.innerHTML = myCurrentHTML
+
+
+    let myHourViewHTML = '<section id="hours">'
+
+    // build hours from HourData viewData[1]
+
+    let myHourdata = viewData[1]
+
+    myHourdata.map((myHour) => {
+
+        let myCurrentHTML = `<section class="hourcard"><h3>${myHour.time}</h3><ul>
+                <li>El ${myHour.alder_pollen}</li>
+                <li>Birk ${myHour.birch_pollen}</li>
+                <li>Græs ${myHour.grass_pollen}</li>
+                <li>Bynke ${myHour.mugwort_pollen}</li>
+                 <li>Oliven ${myHour.olive_pollen}</li>
+                   <li>Ambrosia ${myHour.ragweed_pollen}</li>
+            </ul>
+        </section>`
+        myHourViewHTML += myCurrentHTML
+    })
+
+
+    myHourViewHTML += '</section>'
+    myDisplayElement.innerHTML += myHourViewHTML
 }
 
 
