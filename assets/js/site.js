@@ -11,18 +11,17 @@ function getLocation() {
 
         //  navigator.geolocation.getCurrentPosition requires a succes function name as first param and a error function name as second param.
 
-        navigator.geolocation.getCurrentPosition(showPosition, geoError);
+        navigator.geolocation.getCurrentPosition(PositionRecieved, geoError);
     } else {
         x.innerHTML = "Geolocation is not supported by this browser.";
     }
 }
 
-function showPosition(position) {
-
-
+// Geo location succes function recieves a data object 
+function PositionRecieved(position) {
+    //console.log(position);
     console.log(position.coords.longitude);
     console.log(position.coords.latitude);
-
 }
 
 function geoError(error) {
@@ -44,6 +43,8 @@ function geoError(error) {
             break;
     }
 }
+
+
 
 
 
