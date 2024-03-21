@@ -22,6 +22,8 @@ function PositionRecieved(position) {
     //console.log(position);
     console.log(position.coords.longitude);
     console.log(position.coords.latitude);
+
+    getPollenData(position.coords.latitude, position.coords.longitude)
 }
 
 
@@ -29,13 +31,15 @@ function PositionRecieved(position) {
 function geoError(error) {
 
     console.log(error.message);
+}
 
+
+function getPollenData(lat, long) {
+    // https://geocode.maps.co/reverse?lat=latitude&lon=longitude&api_key=65fb5ea644244903025253axe09afbb
 
 }
 
 
 
 
-
-//   fetch(`https://geocode.maps.co/reverse?lat=${lat}&lon=${long}&api_key=65fb5ea644244903025253axe09afbb`)
 
