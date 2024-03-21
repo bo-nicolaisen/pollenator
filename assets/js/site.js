@@ -13,7 +13,7 @@ function getLocation() {
 
         navigator.geolocation.getCurrentPosition(PositionRecieved, geoError);
     } else {
-        x.innerHTML = "Geolocation is not supported by this browser.";
+        //x.innerHTML = "Geolocation is not supported by this browser.";
     }
 }
 
@@ -23,7 +23,7 @@ function PositionRecieved(position) {
     console.log(position.coords.longitude);
     console.log(position.coords.latitude);
 
-    getPollenData(position.coords.latitude, position.coords.longitude)
+    GetHumanReadableLocation(position.coords.latitude, position.coords.longitude)
 }
 
 
@@ -34,12 +34,51 @@ function geoError(error) {
 }
 
 
-function getPollenData(lat, long) {
-    // https://geocode.maps.co/reverse?lat=latitude&lon=longitude&api_key=65fb5ea644244903025253axe09afbb
 
+
+
+function GetHumanReadableLocation(lat, long) {
+
+    const apiKey = "65fb5ea644244903025253axe09afbb";
+    const url = `https://geocode.maps.co/reverse?lat=${lat}&lon=${long}&api_key=${apiKey}`;
+
+    fetch(url)
+
+        .then(response => {
+
+
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+
+            return response.json();
+        })
+        .then(data => {
+
+
+            BuildlocationName(data.address.city)
+
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            return null;
+        });
 }
 
 
+
+// temp viewCode
+function BuildlocationName(myCity) {
+
+    console.log(myCity);
+
+    let myNameElement = document.getElementById("app")
+
+    myNameElement.innerText = myCity
+
+}
 
 
 
