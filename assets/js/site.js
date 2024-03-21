@@ -128,6 +128,7 @@ function pollenDataScructure(data) {
     let myMasterArray = data.hourly.time
 
     let HourData = []
+
     myMasterArray.map((myTime, index) => {
         let hourData = {}
         hourData.time = myTime
@@ -148,13 +149,6 @@ function pollenDataScructure(data) {
 
 }
 
-
-/* alder_pollen
-birch_pollen
-grass_pollen
-mugwort_pollen
-olive_pollen
-ragweed_pollen */
 
 
 
