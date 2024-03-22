@@ -3,8 +3,6 @@
 getLocation()
 
 
-
-
 function getLocation() {
 
     if (navigator.geolocation) {
@@ -21,8 +19,6 @@ function getLocation() {
 // Geo location succes function recieves a data object 
 function PositionRecieved(position) {
     //console.log(position);
-    console.log(position.coords.longitude);
-    console.log(position.coords.latitude);
 
     // get location name
     GetHumanReadableLocation(position.coords.latitude, position.coords.longitude)
@@ -31,15 +27,11 @@ function PositionRecieved(position) {
     GetPollenData(position.coords.latitude, position.coords.longitude)
 }
 
-
 //geo error function recievs a data object
 function geoError(error) {
 
     console.log(error.message);
 }
-
-
-
 
 
 function GetHumanReadableLocation(lat, long) {
@@ -57,7 +49,6 @@ function GetHumanReadableLocation(lat, long) {
                 throw new Error('Network response was not ok');
             }
 
-
             return response.json();
         })
         .then(data => {
@@ -72,21 +63,13 @@ function GetHumanReadableLocation(lat, long) {
         });
 }
 
-
-
 function GetPollenData(lat, long) {
 
-
-
-    /*  https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${long}&current=alder_pollen,birch_pollen,grass_pollen,mugwort_pollen,olive_pollen,ragweed_pollen&hourly=alder_pollen,birch_pollen,grass_pollen,mugwort_pollen,olive_pollen,ragweed_pollen&timezone=${timeZone}&forecast_days=1
-  */
+    //to do get timezone from date object
     const timeZone = "Europe%2FBerlin";
 
     const url = ` https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${long}&current=alder_pollen,birch_pollen,grass_pollen,mugwort_pollen,olive_pollen,ragweed_pollen&hourly=alder_pollen,birch_pollen,grass_pollen,mugwort_pollen,olive_pollen,ragweed_pollen&timezone=${timeZone}&forecast_days=1`;
 
-
-    console.log("get pollen data");
-    console.log(lat, long);
 
     fetch(url)
 
@@ -125,24 +108,51 @@ function pollenDataScructure(data) {
 
     // generate Hour data
 
-    let myMasterArray = data.hourly.time
+    let myHourlyData = []
 
-    let HourData = []
+    console.log(data.hourly);
 
-    myMasterArray.map((myTime, index) => {
-        let hourData = {}
-        hourData.time = myTime
-        hourData.alder_pollen = data.hourly.alder_pollen[index]
-        hourData.birch_pollen = data.hourly.birch_pollen[index]
-        hourData.grass_pollen = data.hourly.grass_pollen[index]
-        hourData.mugwort_pollen = data.hourly.mugwort_pollen[index]
-        hourData.olive_pollen = data.hourly.olive_pollen[index]
-        hourData.ragweed_pollen = data.hourly.ragweed_pollen[index]
 
-        HourData.push(hourData)
+    data.hourly.time.map((myTime, index) => {
+        let myHourData = {}
+
+        myHourData.time = myTime
+
+        myHourData.alder_pollen = data.hourly.alder_pollen[index]
+        myHourData.birch_pollen = data.hourly.birch_pollen[index]
+
+        myHourData.grass_pollen = data.hourly.grass_pollen[index]
+        myHourData.mugwort_pollen = data.hourly.mugwort_pollen[index]
+        myHourData.olive_pollen = data.hourly.olive_pollen[index]
+        myHourData.ragweed_pollen = data.hourly.ragweed_pollen[index]
+
+
+        console.log("myHourData: " + myHourData);
+        myHourlyData.push(myHourData)
+
     })
-    myViewData.push(HourData)
-    //console.log(HourData);
+
+    console.log(myHourlyData);
+
+
+
+
+
+    /*   let HourData = []
+      data.hourly.time.map((myTime, index) => {
+          let hourData = {}
+          hourData.time = myTime
+          hourData.alder_pollen = data.hourly.alder_pollen[index]
+          hourData.birch_pollen = data.hourly.birch_pollen[index]
+          hourData.grass_pollen = data.hourly.grass_pollen[index]
+          hourData.mugwort_pollen = data.hourly.mugwort_pollen[index]
+          hourData.olive_pollen = data.hourly.olive_pollen[index]
+          hourData.ragweed_pollen = data.hourly.ragweed_pollen[index]
+  
+          HourData.push(hourData)
+      })
+      myViewData.push(HourData)
+      //console.log(HourData); */
 
     BuildPollenView(myViewData)
 
@@ -157,10 +167,8 @@ function pollenDataScructure(data) {
 // builds a pollen data view with current data and hourly 24 hor data recieved in an array
 function BuildPollenView(viewData) {
 
-    // build current
+    // build current section
     let myDisplayElement = document.getElementById('PollenData')
-
-    //console.log(viewData[0]);
 
     let myCurrentData = viewData[0]
     // generate Card HTML for current values
@@ -177,48 +185,36 @@ function BuildPollenView(viewData) {
     myDisplayElement.innerHTML = myCurrentHTML
 
 
-    let myHourViewHTML = '<section id="hours">'
-
     // build hours from HourData viewData[1]
 
-    let myHourdata = viewData[1]
-
-    myHourdata.map((myHour) => {
-
-        let myCurrentHTML = `<section class="hourcard"><h3>${myHour.time}</h3><ul>
-                <li>El ${myHour.alder_pollen}</li>
-                <li>Birk ${myHour.birch_pollen}</li>
-                <li>Græs ${myHour.grass_pollen}</li>
-                <li>Bynke ${myHour.mugwort_pollen}</li>
-                 <li>Oliven ${myHour.olive_pollen}</li>
-                   <li>Ambrosia ${myHour.ragweed_pollen}</li>
-            </ul>
-        </section>`
-        myHourViewHTML += myCurrentHTML
-    })
-
-
-    myHourViewHTML += '</section>'
-    myDisplayElement.innerHTML += myHourViewHTML
+    /*  let myHourViewHTML = '<section id="hours"><h2>time visning</h2>'
+ 
+     let myHourdata = viewData[1]
+ 
+     myHourdata.map((myHour) => {
+         let myCurrentHTML = `<section class="hourcard"><h3>${myHour.time}</h3><ul>
+                 <li>El ${myHour.alder_pollen}</li>
+                 <li>Birk ${myHour.birch_pollen}</li>
+                 <li>Græs ${myHour.grass_pollen}</li>
+                 <li>Bynke ${myHour.mugwort_pollen}</li>
+                  <li>Oliven ${myHour.olive_pollen}</li>
+                    <li>Ambrosia ${myHour.ragweed_pollen}</li>
+             </ul>
+         </section>`
+         myHourViewHTML += myCurrentHTML
+     })
+ 
+ 
+     myHourViewHTML += '</section>'
+     myDisplayElement.innerHTML += myHourViewHTML */
 }
 
 
-
-
-
-
-
-
-
-
-
-// temp viewCode
+// sets location name in dom
 function BuildlocationName(myCity) {
 
-    console.log(myCity);
-
+    //console.log(myCity);
     let myNameElement = document.getElementById("location")
-
     myNameElement.innerText = myCity
 
 }
