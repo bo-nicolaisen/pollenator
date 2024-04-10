@@ -1,10 +1,17 @@
 // write cool JS hwere!!
 
 let map
-let PopUp=false;
+let PopUp = false;
+
+let mapElement = document.getElementById('map')
+
+let currentLat
+let currentLong
+
+let currentPage
+
 
 getLocation();
-
 
 /* function getLocation() {
   if (navigator.geolocation) {
@@ -44,78 +51,77 @@ getLocation();
     throw Error("Promise failed");
   }
 }; */
- 
 
- function makeMap(latitude, longitude) {
 
-   map = L.map('map').setView([latitude, longitude], 13);
+
+
+function makeMap(latitude, longitude) {
+
+  map = L.map('map').setView([latitude, longitude], 13);
 
   //var marker = L.marker([latitude, longitude]).addTo(map);
   map.on('click', onMapClick);
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-}).addTo(map);
+  }).addTo(map);
 }
 
 
 
 function onMapClick(e) {
- 
+
   //moveMapToMarker(10,10);
 
- console.log(e.latlng);
+  console.log(e.latlng);
 
 
-  
 
-  let myContent=`<p>Hello world!<br />This is a nice popup.</p><button onClick="MapPopupCallBack(${e.latlng.lat},${e.latlng.lng})">ok</button>`
-  PopUp = L.popup(e.latlng, {content: myContent}).openOn(map);
- 
+
+  let myContent = `<P>Gem denne placering.</p><button onClick="MapPopupCallBack(${e.latlng.lat},${e.latlng.lng})">ok</button>`
+  PopUp = L.popup(e.latlng, { content: myContent }).openOn(map);
+
   /* var marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
-  getPollenData(e.latlng.lat,e.latlng.lng)  */ 
-} 
+  getPollenData(e.latlng.lat,e.latlng.lng)  */
+}
 
 
-function moveMapToMarker(latitude,longitude){
-
-  
-latitude=57.35
-longitude=9.950001
-
+function moveMapToMarker(latitude, longitude) {
   map.setView([latitude, longitude], 13);
- 
 }
 
 
 
 
- function getLocation() {
+function getLocation() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(positionSucces);
-   
+
   } else {
     document.getElementById("demo").innerHTML = "Geolocation is not supported";
   }
-} 
+}
 
 
 
-function positionSucces(position){
-  makeMap(position.coords.latitude, position.coords.longitude);
+function positionSucces(position) {
+  currentLat = position.coords.latitude
+  currentLong = position.coords.longitude
+
+  // makeMap(currentLat, currentLong);
   getPollenData(position.coords.latitude, position.coords.longitude)
 
 }
 
 
-function getPollenData(latitude,longitude) {
+function getPollenData(latitude, longitude) {
 
- 
-/* console.log("get pollen data: "+position);
-  var latitude = position.coords.latitude;
-  var longitude = position.coords.longitude; */
 
-  getLocationName(latitude,longitude);
+  /* console.log("get pollen data: "+position);
+    var latitude = position.coords.latitude;
+    var longitude = position.coords.longitude; */
+
+  getLocationName(latitude, longitude);
 
   let myUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${latitude}&longitude=${longitude}&current=alder_pollen,birch_pollen,grass_pollen,ragweed_pollen&hourly=alder_pollen,birch_pollen,grass_pollen,mugwort_pollen,ragweed_pollen&timezone=Europe%2FBerlin&domains=cams_europe`;
 
@@ -138,7 +144,7 @@ function getPollenData(latitude,longitude) {
 }
 
 
-function getLocationName(lat,long){
+function getLocationName(lat, long) {
 
 
 
@@ -154,7 +160,7 @@ function getLocationName(lat,long){
       // Handle the data
       console.log(data.display_name);
       //console.log(data.address.hamlet+' '+data.address.village);
-    
+
     })
     .catch((error) => {
       // Handle any errors that occurred during the fetch
@@ -164,38 +170,45 @@ function getLocationName(lat,long){
 
 }
 
+removeMap(){
 
 
-function navCallBack(myNavItem){
+}
+
+
+function navCallBack(myNavItem) {
 
   switch (myNavItem) {
     case "map":
       console.log("map");
+      makeMap(currentLat, currentLong);
       break;
-      case "settings":
+    case "settings":
       console.log("settings");
+      map.remove()
       break;
-      case "home":
+    case "home":
       console.log("home");
+      map.remove()
       break;
-      default:
-     
-        break;
+    default:
+
+      break;
   }
 
 }
 
-function MapPopupCallBack(lat,lng){
+function MapPopupCallBack(lat, lng) {
   console.log("pop up");
   map.closePopup(PopUp)
-  PopUp=false;
+  PopUp = false;
 
-  var marker = L.marker([lat,lng]).addTo(map).bindPopup("Saved Location");
-  getPollenData(lat,lng) 
+  var marker = L.marker([lat, lng]).addTo(map).bindPopup("Saved Location");
+  getPollenData(lat, lng)
 
 }
 
-function PollenDataRecieved(data){
+function PollenDataRecieved(data) {
 
   console.log(data);
 
